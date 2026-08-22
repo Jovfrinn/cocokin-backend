@@ -18,6 +18,8 @@ $$\text{Cosine Similarity} = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \
 
 This yields a score between `0` and `1`, which is formatted as a precise matching percentage `0% - 100%`.
 
+> 📝 **Reference & Inspiration**: The math logic and concept for this vector space matching algorithm are based on the article [Mencari Kecocokan Antara Aku Dan Dia Menggunakan Metode Matematika Cosine Similarity](https://medium.com/@robyfirnandoyusuf/mencari-kecocokan-antara-aku-dan-dia-menggunakan-metode-matematika-cosine-similarity-44086054fac) by Roby Firnando Yusuf.
+
 ---
 
 ## 🛠️ Features
