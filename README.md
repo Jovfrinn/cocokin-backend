@@ -1,98 +1,92 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Cocokin.ai — Computation Engine (Backend)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+> Part of the **Cocokin.ai** vector similarity relationship measurement tool. This repository contains the backend NestJS service.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This NestJS application serves as the computation engine and database layer for Cocokin.ai. It manages authentication, coordinates, submissions, and handles the multi-dimensional vector math calculation to evaluate alignment between users.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📐 Mathematical Model: Cosine Similarity
 
-## Project setup
+The core engine maps answers (ratings 1 to 5) of a quiz into N-dimensional vectors:
+*   **Vector A**: Creator's reference preferences: $\mathbf{A} = [a_1, a_2, \dots, a_n]$
+*   **Vector B**: Participant's answers: $\mathbf{B} = [b_1, b_2, \dots, b_n]$
 
-```bash
-$ npm install
-```
+The backend computes the normalized dot product to find the cosine of the angle between the two vectors:
 
-## Compile and run the project
+$$\text{Cosine Similarity} = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \|\mathbf{B}\|} = \frac{\sum_{i=1}^n a_i b_i}{\sqrt{\sum_{i=1}^n a_i^2} \sqrt{\sum_{i=1}^n b_i^2}}$$
 
-```bash
-# development
-$ npm run start
+This yields a score between `0` and `1`, which is formatted as a precise matching percentage `0% - 100%`.
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## 🛠️ Features
 
-## Run tests
+*   **Google OAuth 2.0 & JWT Authentication**: Hybrid passport strategy supporting standard JWT authentication and instant social login via Google.
+*   **Vector Math Engine**: Calculates cosine similarity on PostgreSQL database rows and compiles detailed angular offsets.
+*   **Geolocation Tracker**: Resolves client IP addresses into real-time cities and countries (using `freeipapi.com` IP lookup) upon quiz submission.
+*   **Prisma ORM & PostgreSQL**: Structured relational modeling with automatic cascade deletes (`onDelete: Cascade` on Quiz relationships).
 
-```bash
-# unit tests
-$ npm run test
+---
 
-# e2e tests
-$ npm run test:e2e
+## 🚀 Tech Stack
 
-# test coverage
-$ npm run test:cov
-```
+*   **Framework**: NestJS (TypeScript)
+*   **Database ORM**: Prisma
+*   **Database**: PostgreSQL
+*   **Security/Auth**: Passport, JWT, Bcrypt
+*   **Third-party strategies**: Google OAuth 2.0
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## ⚙️ Configuration & Installation
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Prerequisites
+Make sure you have Node.js (v18+) and a local PostgreSQL instance running.
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+### Installation
+1. Navigate to the backend directory:
+   ```bash
+   cd cocokin-backend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables. Create a `.env` file in the root of the backend folder:
+   ```env
+   # Database connection string
+   DATABASE_URL="postgresql://username:password@localhost:5432/cocokin?schema=public"
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+   # Google Client Credentials (obtained via Google Cloud Console)
+   GOOGLE_CLIENT_ID="your_google_client_id"
+   GOOGLE_CLIENT_SECRET="your_google_client_secret"
+   GOOGLE_CALLBACK_URL="http://localhost:3000/auth/google/callback"
+   
+   # Frontend redirection URL
+   FRONTEND_URL="http://localhost:5173"
+   ```
+4. Run database migrations to set up schema structures:
+   ```bash
+   npx prisma db push
+   ```
+5. Start NestJS in development mode:
+   ```bash
+   npm run start:dev
+   ```
 
-## Resources
+---
 
-Check out a few resources that may come in handy when working with NestJS:
+## 📁 Endpoints (API Routes)
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+### Authentication
+*   `POST /auth/login` - Standard email/password verification.
+*   `GET /auth/google` - Initiates Google Sign-In redirect.
+*   `GET /auth/google/callback` - Redirect target from Google, issues JWT and redirects to React.
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Quizzes (Protected routes require `Authorization: Bearer <token>`)
+*   `POST /quizzes` [Protected] - Create a new quiz with reference questions.
+*   `GET /quizzes/my` [Protected] - Retrieves all quizzes created by the logged-in user.
+*   `GET /quizzes/:id/submissions` [Protected] - Lists all resonance submissions for a quiz.
+*   `GET /quizzes/:id` [Public] - Gets quiz structure (questions) for participants.
+*   `POST /quizzes/:id/submit` [Public] - Submits participant answers, calculates alignment, tracks IP/location, and stores the result.
