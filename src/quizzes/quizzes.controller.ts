@@ -60,7 +60,10 @@ export class QuizzesController {
     body: { name: string; answers: { questionId: string; value: number }[] },
   ) {
     const ipHeader = req.headers['x-forwarded-for'];
-    const ip = typeof ipHeader === 'string' ? ipHeader.split(',')[0].trim() : req.socket.remoteAddress || '';
+    const ip =
+      typeof ipHeader === 'string'
+        ? ipHeader.split(',')[0].trim()
+        : req.socket.remoteAddress || '';
     return this.quizzesService.submit(id, body.name, body.answers, ip);
   }
 }

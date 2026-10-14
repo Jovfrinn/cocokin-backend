@@ -10,7 +10,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID || 'mock_client_id',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'mock_client_secret',
-      callbackURL: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/auth/google/callback',
+      callbackURL:
+        process.env.GOOGLE_CALLBACK_URL ||
+        'http://localhost:3000/auth/google/callback',
       scope: ['email', 'profile'],
     });
   }
@@ -23,7 +25,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   ): Promise<any> {
     const { id, name, emails } = profile;
     const email = emails[0].value;
-    const displayName = `${name.givenName || ''} ${name.familyName || ''}`.trim() || profile.displayName;
+    const displayName =
+      `${name.givenName || ''} ${name.familyName || ''}`.trim() ||
+      profile.displayName;
 
     // 1. Try to find user by Google ID
     let user = await this.usersService.findByGoogleId(id);

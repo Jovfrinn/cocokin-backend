@@ -4,14 +4,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 
-
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUserDto.password || '', saltRounds)
+    const hashedPassword = await bcrypt.hash(
+      createUserDto.password || '',
+      saltRounds,
+    );
 
     return this.prisma.user.create({
       data: {
@@ -25,15 +27,16 @@ export class UsersService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
-      where: { email } 
+      where: { email },
     });
 
     if (user && user.password) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password: _, ...result } = user;
         return result;
-      }        
+      }
     }
     return null;
   }
@@ -67,10 +70,14 @@ export class UsersService {
     });
   }
 
-  async createGoogleUser(data: { email: string; full_name: string; googleId: string }) {
+  async createGoogleUser(data: {
+    email: string;
+    full_name: string;
+    googleId: string;
+  }) {
     const emailPrefix = data.email.split('@')[0];
     let username = emailPrefix.replace(/[^a-zA-Z0-9_]/g, '');
-    
+
     const existing = await this.prisma.user.findUnique({ where: { username } });
     if (existing) {
       username = `${username}_${Math.random().toString(36).substring(2, 6)}`;
@@ -93,4 +100,3 @@ export class UsersService {
     });
   }
 }
-

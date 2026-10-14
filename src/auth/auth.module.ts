@@ -14,10 +14,10 @@ import { JwtModule } from '@nestjs/jwt';
     JwtModule.register({
       secret: 'SUPER_SECRET_KEY_COCOKIN_123',
       signOptions: { expiresIn: '7d' },
-    })
+    }),
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

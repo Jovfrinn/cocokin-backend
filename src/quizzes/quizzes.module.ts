@@ -4,8 +4,8 @@ import { QuizzesController } from './quizzes.controller';
 import { QuizzesService } from './quizzes.service';
 
 @Module({
-    imports: [PrismaModule],
-    controllers: [QuizzesController],
-    providers: [QuizzesService]
+  imports: [PrismaModule],
+  controllers: [QuizzesController],
+  providers: [QuizzesService],
 })
 export class QuizzesModule {}

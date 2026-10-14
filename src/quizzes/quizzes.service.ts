@@ -14,7 +14,9 @@ export class QuizzesService {
     return this.prisma.quiz.create({
       data: {
         title,
-        description: description ?? 'Kuis ini dibuat untuk menguji kesamaan frekuensi Anda dengan pasangan Anda',
+        description:
+          description ??
+          'Kuis ini dibuat untuk menguji kesamaan frekuensi Anda dengan pasangan Anda',
         creatorId: userId,
         questions: {
           create: questions.map((q) => ({
@@ -53,8 +55,8 @@ export class QuizzesService {
       where: { creatorId: userId },
       orderBy: { createdAt: 'desc' },
       include: {
-        submissions: true
-      }
+        submissions: true,
+      },
     });
   }
 
@@ -102,7 +104,7 @@ export class QuizzesService {
         return `${data.cityName}, ${data.countryName}`;
       }
       return 'Unknown Location';
-    } catch (error) {
+    } catch {
       return 'Unknown Location';
     }
   }
