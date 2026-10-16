@@ -12,7 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: 'SUPER_SECRET_KEY_COCOKIN_123',
+      secret: process.env.JWT_SECRET || 'SUPER_SECRET_KEY_COCOKIN_123',
       signOptions: { expiresIn: '7d' },
     }),
   ],
