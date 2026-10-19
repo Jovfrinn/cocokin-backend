@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,13 +9,29 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto) {
+    const existing = await this.prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: createUserDto.email },
+          { username: createUserDto.username },
+        ],
+      },
+    });
+    if (existing) {
+      throw new ConflictException(
+        existing.email === createUserDto.email
+          ? 'Email sudah terdaftar'
+          : 'Username sudah dipakai',
+      );
+    }
+
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(
       createUserDto.password || '',
       saltRounds,
     );
 
-    return this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         full_name: createUserDto.full_name,
         username: createUserDto.username,
@@ -23,6 +39,9 @@ export class UsersService {
         password: hashedPassword,
       },
     });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _, ...result } = user;
+    return result;
   }
 
   async validateUser(email: string, password: string): Promise<any> {
