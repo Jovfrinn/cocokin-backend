@@ -47,6 +47,14 @@ export class QuizzesController {
     return this.quizzesService.findSubmissions(id);
   }
 
+  @Get(':id/submissions/:submissionId')
+  async getSubmission(
+    @Param('id') id: string,
+    @Param('submissionId') submissionId: string,
+  ) {
+    return this.quizzesService.findSubmission(id, submissionId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.quizzesService.findOne(id);

@@ -153,4 +153,22 @@ export class QuizzesService {
       },
     });
   }
+
+  async findSubmission(quizId: string, submissionId: string) {
+    const submission = await this.prisma.submission.findFirst({
+      where: { id: submissionId, quizId },
+      select: {
+        id: true,
+        name: true,
+        score: true,
+        location: true,
+        submittedAt: true,
+        answers: true,
+      },
+    });
+    if (!submission) {
+      throw new NotFoundException('Hasil Tidak Ditemukan');
+    }
+    return submission;
+  }
 }
